@@ -1,0 +1,9 @@
+<div class="dashboard-container">
+  <div
+    class="card"
+    *ngFor="let c of cards"
+    (click)="navigate(c.route)"
+  >
+    <h3>{{ c.title }}</h3>
+  </div>
+</div>

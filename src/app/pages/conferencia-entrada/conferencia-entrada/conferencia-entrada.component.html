@@ -1,0 +1,49 @@
+<nav class="navbar">
+  <button class="btn-back" (click)="back()">←</button>
+  <span class="title">{{ etapa===1 ? 'Dados da NFe' : 'Incluir Itens' }}</span>
+</nav>
+
+<section *ngIf="etapa===1" class="step step-meta">
+  <form [formGroup]="formMeta" class="form-meta">
+    <label>
+      Senha:
+      <input formControlName="chaveRegistro" />
+    </label>
+    <label>
+      Nº NFe:
+      <input formControlName="numeroNota" placeholder="0000" />
+    </label>
+    <label>
+      Série:
+      <input formControlName="serieNota" placeholder="001" />
+    </label>
+    <button class="btn-next" (click)="next()" [disabled]="formMeta.invalid">
+      Avançar
+    </button>
+    
+  </form>
+</section>
+
+<section *ngIf="etapa===2" class="step step-items">
+  <form [formGroup]="formItem" (ngSubmit)="addItem()" class="form-item">
+    <input formControlName="codigo" placeholder="Código do Item" autofocus />
+    <input formControlName="descricao" placeholder="Descrição" readonly />
+    <div class="row">
+      <input formControlName="quantidade" type="number" min="1" placeholder="Qtd" />
+      <button type="submit" [disabled]="formItem.invalid">➕</button>
+    </div>
+  </form>
+
+  <ul class="list-items">
+    <li *ngFor="let it of items; let i = index">
+      <span>{{ it.codigo }} — {{ it.descricao }} (x{{ it.quantidade }})</span>
+      <button (click)="rm(i)">✕</button>
+    </li>
+  </ul>
+
+  <div *ngIf="erro" class="error">{{ erro }}</div>
+
+  <button class="btn-final" (click)="finalize()" [disabled]="salvando">
+    {{ salvando ? 'Salvando…' : 'Finalizar' }}
+  </button>
+</section>

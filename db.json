@@ -1,0 +1,67 @@
+{
+  "login": [
+    {
+      "id": "1",
+      "usuario": "admin",
+      "senha": "1234",
+      "nome": "Administrador",
+      "token": "fake-jwt-token"
+    },
+    {
+      "id": "5fcd",
+      "usuario": "jrestrela@liteci.com.br",
+      "senha": "04955676000190"
+    }
+  ],
+  "notas": [
+    {
+      "id": "1",
+      "numero": "002187",
+      "serie": "1",
+      "data": "2025-05-01"
+    },
+    {
+      "id": "2",
+      "numero": "102557",
+      "serie": "1",
+      "data": "2025-05-01"
+    }
+  ],
+  "conferencias": [
+    {
+      "id": "4e5b",
+      "notaId": 1,
+      "numeroNota": "2222",
+      "serieNota": "001",
+      "chaveRegistro": 486015,
+      "items": [
+        {
+          "codigo": "789",
+          "descricao": "",
+          "quantidade": 1
+        }
+      ],
+      "data": "2025-05-08T20:21:50.973Z"
+    }
+  ],
+  "items": [
+    {
+      "id": 1,
+      "codigo": "7891317017378",
+      "descricao": "SERTRALINA",
+      "embalagem": "UN/1",
+      "estoque": 50,
+      "precoVenda": 3.5,
+      "precoCusto": 2
+    },
+    {
+      "id": 2,
+      "codigo": "794637504331",
+      "descricao": "PAPEL HIG ROSE NEUTRO LEVE",
+      "embalagem": "ROL/1",
+      "estoque": 200,
+      "precoVenda": 4.2,
+      "precoCusto": 3
+    }
+  ]
+}

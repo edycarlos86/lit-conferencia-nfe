@@ -1,0 +1,37 @@
+<div class="nota-container">
+  <h2>Notas Fiscais - Conferência</h2>
+
+  <button class="btn-primary" (click)="incluir()">
+    + Incluir Nova Conferência
+  </button>
+
+  <div *ngIf="carregando" class="loading">Carregando notas...</div>
+  <div *ngIf="erro" class="error">{{ erro }}</div>
+
+  <table *ngIf="!carregando && notas.length" class="nota-table">
+    <thead>
+      <tr>
+        <th>Controle</th>
+        <th>Número</th>
+        <th>Série</th>
+        <th>Data</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let n of notas">
+        <td>{{ n.id }}</td>
+        <td>{{ n.numero }}</td>
+        <td>{{ n.serie }}</td>
+        <td>{{ n.data | date:'dd/MM/yyyy' }}</td>
+        <td>
+          <button (click)="editar(n)">Editar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!carregando && !notas.length" class="empty">
+    Nenhuma nota encontrada.
+  </div>
+</div>

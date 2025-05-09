@@ -1,0 +1,45 @@
+.nota-container {
+  padding: 2rem;
+  h2 {
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+}
+
+.btn-primary {
+  display: block;
+  margin: 0 auto 1.5rem;
+  padding: 0.75rem 1.25rem;
+  background: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.btn-primary:hover {
+  background: #218838;
+}
+
+.loading,
+.error,
+.empty {
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.nota-table {
+  width: 100%;
+  border-collapse: collapse;
+  th, td {
+    border: 1px solid #ddd;
+    padding: 0.5rem 1rem;
+    text-align: left;
+  }
+  th {
+    background: #f8f9fa;
+  }
+  button {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+  }
+}

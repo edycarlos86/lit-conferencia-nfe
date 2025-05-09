@@ -1,0 +1,7 @@
+<div class="login-container">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <input formControlName="usuario" placeholder="Usuário" />
+    <input type="password" formControlName="senha" placeholder="Senha" />
+    <button type="submit" [disabled]="form.invalid">Entrar</button>
+  </form>
+</div>
