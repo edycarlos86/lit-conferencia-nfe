@@ -6,7 +6,9 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "build:pages": "ng build --output-path docs --base-href=/lit-conferencia-nfe/",
+  "deploy": "npm run build:pages && git add . && git commit -m 'Deploy no GitHub Pages' && git push origin main"
   },
   "private": true,
   "dependencies": {
