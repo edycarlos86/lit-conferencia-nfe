@@ -1,13 +1,16 @@
 <nav class="navbar">
   <button class="btn-back" (click)="back()">←</button>
-  <span class="title">{{ etapa===1 ? 'Dados da NFe' : 'Incluir Itens' }}</span>
+  <span class="title">
+    {{ etapa === 1 ? 'Dados da NFe' : 'Incluir Itens' }}
+  </span>
 </nav>
 
-<section *ngIf="etapa===1" class="step step-meta">
+<!-- ETAPA 1: Dados da NFe -->
+<section *ngIf="etapa === 1" class="step step-meta">
   <form [formGroup]="formMeta" class="form-meta">
     <label>
       Senha:
-      <input formControlName="chaveRegistro" />
+      <input formControlName="chaveRegistro" readonly />
     </label>
     <label>
       Nº NFe:
@@ -20,16 +23,43 @@
     <button class="btn-next" (click)="next()" [disabled]="formMeta.invalid">
       Avançar
     </button>
-    
   </form>
 </section>
 
-<section *ngIf="etapa===2" class="step step-items">
+<!-- ETAPA 2: Incluir Itens -->
+<section *ngIf="etapa === 2" class="step step-items">
+  <div class="input-scan">
+    <input
+      formControlName="codigo"
+      placeholder="Código do Item"
+      class="curved-input"
+      readonly
+    />
+    <button type="button" class="btn-scan" (click)="toggleScanner()">📷</button>
+  </div>
+
+  <zxing-scanner
+    *ngIf="showScanner"
+    class="scanner"
+    (scanSuccess)="onCodeResult($event)"
+    [formats]="availableFormats"
+  ></zxing-scanner>
+
   <form [formGroup]="formItem" (ngSubmit)="addItem()" class="form-item">
-    <input formControlName="codigo" placeholder="Código do Item" autofocus />
-    <input formControlName="descricao" placeholder="Descrição" readonly />
+    <input
+      formControlName="descricao"
+      placeholder="Descrição"
+      class="curved-input"
+      readonly
+    />
     <div class="row">
-      <input formControlName="quantidade" type="number" min="1" placeholder="Qtd" />
+      <input
+        formControlName="quantidade"
+        type="number"
+        min="1"
+        placeholder="Qtd"
+        class="curved-input small-input"
+      />
       <button type="submit" [disabled]="formItem.invalid">➕</button>
     </div>
   </form>
