@@ -38,12 +38,13 @@
         <button type="button" (click)="toggleScanner()">📷</button>
       </div>
 
-      <!-- scanner full-screen -->
+      <!-- full-screen scanner modal -->
       <div *ngIf="showScanner" class="scanner-modal">
         <zxing-scanner
           #scanner
           [device]="currentDevice"
           [formats]="availableFormats"
+          [autostart]="true"
           (scanSuccess)="onCodeResult($event)"
         ></zxing-scanner>
         <button class="close-scanner" (click)="showScanner=false">✕</button>

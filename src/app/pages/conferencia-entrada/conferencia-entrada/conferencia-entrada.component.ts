@@ -20,6 +20,7 @@ import { ItemService } from '../../../core/services/item.service';
 import { NotaService } from '../../../core/services/nota.service';
 
 
+
 @Component({
   selector: 'app-conferencia-entrada',
   standalone: true,
@@ -72,6 +73,7 @@ export class ConferenciaEntradaComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    // carrega nota se houver
     this.route.queryParams.subscribe(p => {
       const id = +p['notaId'] || 0;
       if (id) {
@@ -87,6 +89,7 @@ export class ConferenciaEntradaComponent implements OnInit, AfterViewInit {
       }
     });
 
+    // buscar item ao alterar código
     this.formItem.get('codigo')!.valueChanges.subscribe(code => {
       this.currentItem = null;
       this.formItem.patchValue({ descricao: '', embalagem: 1, total: 1 }, { emitEvent: false });
@@ -104,17 +107,22 @@ export class ConferenciaEntradaComponent implements OnInit, AfterViewInit {
       }
     });
 
+    // recalcular total
     this.formItem.get('quantidade')!.valueChanges.subscribe(_ => this.updateTotal());
     this.formItem.get('embalagem')!.valueChanges.subscribe(_ => this.updateTotal());
   }
 
   ngAfterViewInit(): void {
-    // espera o scanner inicializar, busca câmeras
+    // dispara o askForPermission para solicitar câmera
+    this.scannerComponent.askForPermission();
+
+    // quando listar câmeras, escolhe a traseira
     this.scannerComponent.camerasFound.subscribe((devices: MediaDeviceInfo[]) => {
       this.currentDevice =
         devices.find(d => /back|rear|environment/gi.test(d.label)) || devices[0];
       this.scannerComponent.device = this.currentDevice;
     });
+
     this.scannerComponent.camerasNotFound.subscribe(() => {
       console.warn('Nenhuma câmera encontrada.');
     });
@@ -134,6 +142,7 @@ export class ConferenciaEntradaComponent implements OnInit, AfterViewInit {
     if (this.formMeta.invalid) return;
     this.etapa = 2;
   }
+
   back(): void {
     if (this.etapa === 1) {
       this.router.navigate(['/nota-fiscal']);
