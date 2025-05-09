@@ -11,6 +11,21 @@
       "id": "5fcd",
       "usuario": "jrestrela@liteci.com.br",
       "senha": "04955676000190"
+    },
+    {
+      "id": "31b2",
+      "usuario": "admin",
+      "senha": "1234"
+    },
+    {
+      "id": "f9f5",
+      "usuario": "jrestrela@liteci.com.br",
+      "senha": "04955676000190"
+    },
+    {
+      "id": "3cb7",
+      "usuario": "jrestrela@liteci.com.br",
+      "senha": "04955676000190"
     }
   ],
   "notas": [
@@ -46,7 +61,7 @@
   ],
   "items": [
     {
-      "id": 1,
+      "id": "1",
       "codigo": "7891317017378",
       "descricao": "SERTRALINA",
       "embalagem": "UN/1",
@@ -55,7 +70,7 @@
       "precoCusto": 2
     },
     {
-      "id": 2,
+      "id": "2",
       "codigo": "794637504331",
       "descricao": "PAPEL HIG ROSE NEUTRO LEVE",
       "embalagem": "ROL/1",

@@ -1,79 +1,78 @@
 <nav class="navbar">
   <button class="btn-back" (click)="back()">←</button>
-  <span class="title">
-    {{ etapa === 1 ? 'Dados da NFe' : 'Incluir Itens' }}
-  </span>
+  <span class="title">{{ etapa===1 ? 'Dados da NFe' : 'Incluir Itens' }}</span>
 </nav>
 
-<!-- ETAPA 1: Dados da NFe -->
-<section *ngIf="etapa === 1" class="step step-meta">
-  <form [formGroup]="formMeta" class="form-meta">
-    <label>
-      Senha:
-      <input formControlName="chaveRegistro" readonly />
-    </label>
-    <label>
-      Nº NFe:
-      <input formControlName="numeroNota" placeholder="0000" />
-    </label>
-    <label>
-      Série:
-      <input formControlName="serieNota" placeholder="001" />
-    </label>
-    <button class="btn-next" (click)="next()" [disabled]="formMeta.invalid">
-      Avançar
-    </button>
-  </form>
-</section>
+<div class="container">
 
-<!-- ETAPA 2: Incluir Itens -->
-<section *ngIf="etapa === 2" class="step step-items">
-  <div class="input-scan">
-    <input
-      formControlName="codigo"
-      placeholder="Código do Item"
-      class="curved-input"
-      readonly
-    />
-    <button type="button" class="btn-scan" (click)="toggleScanner()">📷</button>
-  </div>
+  <!-- ETAPA 1 -->
+  <section *ngIf="etapa===1" class="step step-meta">
+    <form [formGroup]="formMeta">
+      <div class="field">
+        <label>Senha:</label>
+        <input formControlName="chaveRegistro" readonly />
+      </div>
+      <div class="field">
+        <label>Nº NFe:</label>
+        <input formControlName="numeroNota" placeholder="0000" />
+      </div>
+      <div class="field">
+        <label>Série:</label>
+        <input formControlName="serieNota" placeholder="001" />
+      </div>
+      <button type="button" class="btn-next" (click)="next()" [disabled]="formMeta.invalid">
+        Avançar
+      </button>
+    </form>
+  </section>
 
-  <zxing-scanner
-    *ngIf="showScanner"
-    class="scanner"
-    (scanSuccess)="onCodeResult($event)"
-    [formats]="availableFormats"
-  ></zxing-scanner>
-
-  <form [formGroup]="formItem" (ngSubmit)="addItem()" class="form-item">
-    <input
-      formControlName="descricao"
-      placeholder="Descrição"
-      class="curved-input"
-      readonly
-    />
-    <div class="row">
-      <input
-        formControlName="quantidade"
-        type="number"
-        min="1"
-        placeholder="Qtd"
-        class="curved-input small-input"
-      />
-      <button type="submit" [disabled]="formItem.invalid">➕</button>
+  <!-- ETAPA 2 -->
+  <section *ngIf="etapa===2" class="step step-items">
+    <div class="field">
+      Controle: {{ items.length || 1 }}
     </div>
-  </form>
 
-  <ul class="list-items">
-    <li *ngFor="let it of items; let i = index">
-      <span>{{ it.codigo }} — {{ it.descricao }} (x{{ it.quantidade }})</span>
-      <button (click)="rm(i)">✕</button>
-    </li>
-  </ul>
+    <form [formGroup]="formItem" class="form-item">
+      <div class="card scan-card">
+        <input formControlName="codigo" placeholder="Código do Item" />
+        <button type="button" (click)="toggleScanner()">📷</button>
+      </div>
 
-  <div *ngIf="erro" class="error">{{ erro }}</div>
+      <zxing-scanner
+        *ngIf="showScanner"
+        (scanSuccess)="onCodeResult($event)"
+        [formats]="availableFormats"
+        class="scanner"
+      ></zxing-scanner>
 
-  <button class="btn-final" (click)="finalize()" [disabled]="salvando">
-    {{ salvando ? 'Salvando…' : 'Finalizar' }}
-  </button>
-</section>
+      <div class="row-inputs">
+        <input type="number" formControlName="quantidade" placeholder="Qtd" />
+        <input type="number" formControlName="embalagem" placeholder="Emb" />
+        <input type="number" formControlName="total" placeholder="Total" readonly />
+      </div>
+
+      <button type="button" class="btn-add" (click)="addItem()" [disabled]="formItem.invalid">
+        Adicionar
+      </button>
+    </form>
+
+    <div *ngIf="currentItem" class="details">
+      <p><strong>Nome:</strong> {{ currentItem.descricao }}</p>
+      <p><strong>Embalagem:</strong> {{ currentItem.embalagem }}</p>
+      <p><strong>Estoque:</strong> {{ currentItem.estoque }}</p>
+      <p><strong>Custo:</strong> {{ currentItem.precoCusto | currency:'BRL' }}</p>
+      <p><strong>Venda:</strong> {{ currentItem.precoVenda | currency:'BRL' }}</p>
+    </div>
+
+    <ul class="list">
+      <li *ngFor="let it of items; let i = index">
+        {{ it.codigo }} — {{ it.descricao }} (x{{ it.quantidade }})
+        <button (click)="removeItem(i)">✕</button>
+      </li>
+    </ul>
+
+    <div *ngIf="erro" class="error">{{ erro }}</div>
+    <button class="btn-final" (click)="finalize()">Finalizar</button>
+  </section>
+
+</div>

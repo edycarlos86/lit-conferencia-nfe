@@ -9,7 +9,7 @@ export interface Conferencia {
   notaId: number;
   numeroNota: string;
   serieNota: string;
-  chaveRegistro: string;
+  chaveRegistro: number;
   items: ConferenciaItem[];
   data: string; // ISO
 }
