@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -7,15 +7,17 @@ import {
   ReactiveFormsModule
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ZXingScannerModule } from '@zxing/ngx-scanner';
+import {
+  ZXingScannerModule,
+  ZXingScannerComponent
+} from '@zxing/ngx-scanner';
 import { BarcodeFormat } from '@zxing/library';
-import { Nota } from '../../../core/models/nota.model';
-import { Item } from '../../../core/models/item.model';
 import { ConferenciaItem, Conferencia } from '../../../core/models/conferencia.model';
+import { Item } from '../../../core/models/item.model';
+import { Nota } from '../../../core/models/nota.model';
 import { ConferenciaService } from '../../../core/services/conferencia.service';
 import { ItemService } from '../../../core/services/item.service';
 import { NotaService } from '../../../core/services/nota.service';
-
 
 
 @Component({
@@ -29,12 +31,16 @@ import { NotaService } from '../../../core/services/nota.service';
   templateUrl: './conferencia-entrada.component.html',
   styleUrls: ['./conferencia-entrada.component.scss']
 })
-export class ConferenciaEntradaComponent implements OnInit {
+export class ConferenciaEntradaComponent implements OnInit, AfterViewInit {
+  @ViewChild('scanner') scannerComponent!: ZXingScannerComponent;
+
   etapa = 1;
   formMeta: FormGroup;
   formItem: FormGroup;
+
   showScanner = false;
   availableFormats = [ BarcodeFormat.EAN_13, BarcodeFormat.CODE_128, BarcodeFormat.EAN_8 ];
+  currentDevice?: MediaDeviceInfo;
 
   nota?: Nota;
   currentItem: Item | null = null;
@@ -51,13 +57,11 @@ export class ConferenciaEntradaComponent implements OnInit {
     private itemService: ItemService,
     private confService: ConferenciaService
   ) {
-    // ETAPA 1
     this.formMeta = this.fb.group({
       numeroNota: ['', Validators.required],
       serieNota: ['', Validators.required],
       chaveRegistro: [{ value: this.generateChave(), disabled: true }]
     });
-    // ETAPA 2
     this.formItem = this.fb.group({
       codigo: ['', Validators.required],
       quantidade: [1, [Validators.required, Validators.min(1)]],
@@ -76,14 +80,13 @@ export class ConferenciaEntradaComponent implements OnInit {
           if (this.nota) {
             this.formMeta.patchValue({
               numeroNota: this.nota.numero,
-              serieNota: this.nota.serie
+              serieNota: (this.nota as any).serie || ''
             });
           }
         });
       }
     });
 
-    // Quando muda código, busca item
     this.formItem.get('codigo')!.valueChanges.subscribe(code => {
       this.currentItem = null;
       this.formItem.patchValue({ descricao: '', embalagem: 1, total: 1 }, { emitEvent: false });
@@ -91,16 +94,30 @@ export class ConferenciaEntradaComponent implements OnInit {
         this.itemService.buscarPorCodigo(code).subscribe(arr => {
           if (arr.length) {
             this.currentItem = arr[0];
-            this.formItem.patchValue({ descricao: this.currentItem.descricao }, { emitEvent: false });
+            this.formItem.patchValue(
+              { descricao: this.currentItem.descricao },
+              { emitEvent: false }
+            );
             this.updateTotal();
           }
         });
       }
     });
 
-    // Recalcula total sempre que qtd ou embalagem mudam
     this.formItem.get('quantidade')!.valueChanges.subscribe(_ => this.updateTotal());
     this.formItem.get('embalagem')!.valueChanges.subscribe(_ => this.updateTotal());
+  }
+
+  ngAfterViewInit(): void {
+    // espera o scanner inicializar, busca câmeras
+    this.scannerComponent.camerasFound.subscribe((devices: MediaDeviceInfo[]) => {
+      this.currentDevice =
+        devices.find(d => /back|rear|environment/gi.test(d.label)) || devices[0];
+      this.scannerComponent.device = this.currentDevice;
+    });
+    this.scannerComponent.camerasNotFound.subscribe(() => {
+      console.warn('Nenhuma câmera encontrada.');
+    });
   }
 
   private generateChave(): number {
@@ -108,8 +125,8 @@ export class ConferenciaEntradaComponent implements OnInit {
   }
 
   private updateTotal(): void {
-    const qtd = this.formItem.get('quantidade')!.value || 0;
-    const emb = this.formItem.get('embalagem')!.value || 1;
+    const qtd = this.formItem.value.quantidade || 0;
+    const emb = this.formItem.value.embalagem || 1;
     this.formItem.get('total')!.setValue(qtd * emb, { emitEvent: false });
   }
 
@@ -126,8 +143,9 @@ export class ConferenciaEntradaComponent implements OnInit {
   }
 
   toggleScanner(): void {
-    this.showScanner = !this.showScanner;
+    this.showScanner = true;
   }
+
   onCodeResult(code: string): void {
     this.showScanner = false;
     this.formItem.patchValue({ codigo: code });
@@ -135,12 +153,12 @@ export class ConferenciaEntradaComponent implements OnInit {
 
   addItem(): void {
     if (!this.currentItem || this.formItem.invalid) return;
-    const { codigo, quantidade, descricao } = this.formItem.value;
-    this.items.push({ codigo, quantidade, descricao });
-    // limpa formItem
+    const { codigo, descricao, quantidade } = this.formItem.value;
+    this.items.push({ codigo, descricao, quantidade });
     this.formItem.reset({ codigo: '', quantidade: 1, embalagem: 1, total: 1, descricao: '' });
     this.currentItem = null;
   }
+
   removeItem(i: number): void {
     this.items.splice(i, 1);
   }

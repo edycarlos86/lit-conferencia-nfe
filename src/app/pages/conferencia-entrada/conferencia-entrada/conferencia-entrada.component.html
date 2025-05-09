@@ -6,7 +6,7 @@
 <div class="container">
 
   <!-- ETAPA 1 -->
-  <section *ngIf="etapa===1" class="step step-meta">
+  <section *ngIf="etapa===1" class="step-meta">
     <form [formGroup]="formMeta">
       <div class="field">
         <label>Senha:</label>
@@ -27,23 +27,27 @@
   </section>
 
   <!-- ETAPA 2 -->
-  <section *ngIf="etapa===2" class="step step-items">
+  <section *ngIf="etapa===2" class="step-items">
     <div class="field">
       Controle: {{ items.length || 1 }}
     </div>
 
     <form [formGroup]="formItem" class="form-item">
-      <div class="card scan-card">
+      <div class="scan-card">
         <input formControlName="codigo" placeholder="Código do Item" />
         <button type="button" (click)="toggleScanner()">📷</button>
       </div>
 
-      <zxing-scanner
-        *ngIf="showScanner"
-        (scanSuccess)="onCodeResult($event)"
-        [formats]="availableFormats"
-        class="scanner"
-      ></zxing-scanner>
+      <!-- scanner full-screen -->
+      <div *ngIf="showScanner" class="scanner-modal">
+        <zxing-scanner
+          #scanner
+          [device]="currentDevice"
+          [formats]="availableFormats"
+          (scanSuccess)="onCodeResult($event)"
+        ></zxing-scanner>
+        <button class="close-scanner" (click)="showScanner=false">✕</button>
+      </div>
 
       <div class="row-inputs">
         <input type="number" formControlName="quantidade" placeholder="Qtd" />
